@@ -1,0 +1,5 @@
+<root>
+    <item name='org.apache.flink.api.common.functions.RichMapFunction RichMapFunction()'>
+        <annotation name='java.lang.Deprecated'/>
+    </item>
+</root>
