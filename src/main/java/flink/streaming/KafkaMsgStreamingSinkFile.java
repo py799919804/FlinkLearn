@@ -1,15 +1,15 @@
 package flink.streaming;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ultrapower.fsms.flink.streaming.bean.BizData;
-import com.ultrapower.fsms.flink.streaming.common.ConverUtils;
-import com.ultrapower.fsms.flink.streaming.common.DateTimeUtil;
-import com.ultrapower.fsms.flink.streaming.common.IdGenerator;
+import flink.streaming.bean.BizData;
+import flink.streaming.common.ConverUtils;
+import flink.streaming.common.DateTimeUtil;
+import flink.streaming.common.IdGenerator;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.core.fs.FileSystem;
+import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.annotation.JsonInclude;
+import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
