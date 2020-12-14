@@ -6,7 +6,11 @@
 
     <groupId>ultra.ydit.appdev</groupId>
     <artifactId>FlinkLearn</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>MergeTest</module>
+    </modules>
 
 
     <properties>
