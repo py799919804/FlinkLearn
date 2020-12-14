@@ -1,5 +1,7 @@
 package flink
 import flink_01.MyTrigger
+import org.apache.flink.api.common.state.ValueStateDescriptor
+import org.apache.flink.api.scala.typeutils.Types
 import org.apache.flink.streaming.api.functions.AssignerWithPeriodicWatermarks
 import org.apache.flink.streaming.api.scala.function.ProcessWindowFunction
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment, _}
@@ -27,12 +29,12 @@ object FlinkStreamTest {
     val streamEnv: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
     streamEnv.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
     streamEnv.getCheckpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE)
-    streamEnv.enableCheckpointing(1000)
-    streamEnv.getConfig.setAutoWatermarkInterval(3L)
+//    streamEnv.enableCheckpointing(3000)
+//    streamEnv.getConfig.setAutoWatermarkInterval(3L)
     streamEnv.setParallelism(1)
 
-//    val input = streamEnv.socketTextStream("192.168.2.101",9999)
-    val input = streamEnv.addSource(new MySource2)
+    val input = streamEnv.socketTextStream("localhost",9999)
+//    val input = streamEnv.addSource(new MySource2)
     val input2 = input.map(line => {
       val strings = line.split(",")
       Event(strings(0).toInt,strings(1),strings(2),strings(3).toLong)
@@ -73,6 +75,7 @@ object FlinkStreamTest {
       * TumblingEventTimeWindows为基于时间时间的滚动窗口
       */
       .window(TumblingEventTimeWindows.of(Time.seconds(3)))
+        .allowedLateness(Time.seconds(3))
       /*
       * 此处添加自定义的trigger
       * 基于时间时间的默认触发器为EventTimeTrigger
@@ -97,7 +100,21 @@ object FlinkStreamTest {
       * */
       .process(new ProcessWindowFunction[Event,Event,Int,TimeWindow] {
       override def process(key: Int, context: Context, elements: Iterable[Event], out: Collector[Event]): Unit = {
-        elements.foreach(out.collect(_))
+        lazy val isUpdate = getRuntimeContext.getState(
+          new ValueStateDescriptor[Boolean]("update", Types.of[Boolean])
+        )
+        if (!isUpdate.value()) {
+//          out.collect("在水位线超过窗口结束时间的时候，窗口第一次闭合计算")
+          elements.toList.sortBy(_.time).foreach(out.collect(_))
+          isUpdate.update(true)
+          println("新窗口")
+        } else {
+//          out.collect("迟到元素来了以后，更新窗口闭合计算的结果")
+          elements.toList.sortBy(_.time).foreach(out.collect(_))
+          println("旧窗口重新计算")
+        }
+//        elements.toList.sortBy(_.time).foreach(out.collect(_))
+//        elements.foreach(out.collect(_))
       }
     })
       .print()

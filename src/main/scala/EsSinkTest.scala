@@ -6,11 +6,11 @@ import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 import org.apache.flink.streaming.connectors.elasticsearch.util.IgnoringFailureHandler
 import org.apache.flink.streaming.connectors.elasticsearch.{ElasticsearchSinkFunction, RequestIndexer}
-import org.apache.flink.streaming.connectors.elasticsearch6.ElasticsearchSink
 import org.apache.http.HttpHost
 import org.elasticsearch.action.index.IndexRequest
 import org.elasticsearch.client.Requests
 import org.apache.flink.api.scala._
+import org.apache.flink.streaming.connectors.elasticsearch7.ElasticsearchSink
 
 object EsSinkTest {
   def main(args: Array[String]): Unit = {
